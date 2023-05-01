@@ -71,12 +71,12 @@
     <groupId>com.bigdata</groupId>
     <artifactId>bigdata</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <name>logger-collect</name>
+    <name>bigdata-file-etl</name>
 
     <description>大数据文本信息etl</description>
 
     <build>
-        <finalName>bigdata-log-etl</finalName>
+        <finalName>bigdata-file-etl</finalName>
 
         <plugins>
             <plugin>
