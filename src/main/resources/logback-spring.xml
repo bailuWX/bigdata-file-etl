@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <contextName>bigdatalog</contextName>
+    <property name="log.path" value="/logs"/>
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-mi-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 输出到文件: right log -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/logback.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 输出到文件: error log -->
+    <appender name="file-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/logback-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>20</maxHistory>
+        </rollingPolicy>
+        <!-- 过滤掉 TRACE、DEBUG、INFO、WARN 级别的日志-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 忽略swagger参数类型警告 -->
+    <logger name="io.swagger.models.parameters.AbstractSerializableParameter" level="ERROR" />
+
+    <!-- 忽略lettuce无限重连日志 -->
+    <logger name="io.lettuce.core.protocol.ConnectionWatchdog" level="WARN" />
+    <logger name="io.lettuce.core.protocol.ReconnectionHandler" level="WARN" />
+
+    <!-- 忽略Xss攻击的info级别印日志 -->
+    <logger name="com.bigdata.common.filter.XssRequestBodyWrapper" level="WARN" />
+    <logger name="com.bigdata.common.filter.XssValidateFilter" level="WARN" />
+    <logger name="com.bigdata.omp.modules.codeManager.mapper.SaveLogDataMapper" level="ERROR" />
+
+    <!-- 默认打印方式（application单文件） -->
+    <root level="info">
+        <appender-ref ref="console"/>
+    </root>
+    <logger name="com.bigdata" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <!-- 多环境打印方式（application多文件） -->
+    <!-- 开发环境，测试环境。多个使用逗号隔开. -->
+    <springProfile name="dev,szq-test,szq-prod">
+        <root level="info">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+        <logger name="com.bigdata" level="error" additivity="false">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file-error"/>
+
+        </logger>
+        <logger name="com.bigdata" level="debug" additivity="false">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </logger>
+    </springProfile>
+    <!-- 生产环境. -->
+    <springProfile name="prod,test,xz,demo">
+        <root level="info">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+        <logger name="com.bigdata" level="error" additivity="false">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file-error"/>
+        </logger>
+        <logger name="com.bigdata" level="info" additivity="false">
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </logger>
+    </springProfile>
+
+</configuration>

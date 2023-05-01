@@ -1,0 +1,45 @@
+server:
+  servlet:
+    context-path: /webIde-api
+
+
+#mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*/*.xml
+  configuration:
+    call-setters-on-nulls: true
+  type-aliases-package: com.bigdata.omp.modules.codeManager.mapper
+
+
+
+spring:
+  #数据源连接池默认使用的是HikariCP
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/etl?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    #    password: mysql
+    password: ENC(0nZwcqOCPYWL6+0KyJhyGg==)
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      connection-timeout: 30000
+      idle-timeout: 30000
+
+savelog-properties:
+  #文件临时的保存目录,指的是把下载后的temp文件保存在本地的目录
+  saveFileDirectory: /opt/
+  #日志文件格式: eg.日期可以指定格式,如{yyyy-MM-dd}
+  path: /logs/nohup.{port}.out
+
+scheduled-config:
+  #cron: 0 0 1 * * ?
+  cron: "*/5 * * * * ?"
+
+
+#数据库密码脱敏的盐
+jasypt:
+  encryptor:
+    password: bigdata
+
+
